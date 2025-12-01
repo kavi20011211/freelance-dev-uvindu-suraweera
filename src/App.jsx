@@ -3,6 +3,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useEffect, useRef } from "react";
 import { AsteriskIcon, StarIcon } from "./component";
 import backgroundImg from "./assets/background.jfif";
+import Service from "./service";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -343,6 +344,8 @@ function App() {
             </div>
           </div>
         </div>
+
+        <Service />
 
         {/* Dark section wrapper */}
         <div id="wrapper" ref={wrapperRef} className="min-h-screen">

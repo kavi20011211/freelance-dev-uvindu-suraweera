@@ -1,411 +1,267 @@
-import React, { useEffect, useRef } from "react";
-import gsap from "gsap";
-import { ScrollSmoother } from "gsap/ScrollSmoother";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { Observer } from "gsap/Observer";
+import React, { useMemo, useState } from "react";
+import {
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
+  Box,
+  Chip,
+  IconButton,
+  Stack,
+  TextField,
+  Typography,
+  Button,
+  Divider,
+} from "@mui/material";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import SearchIcon from "@mui/icons-material/Search";
+import UnfoldMoreIcon from "@mui/icons-material/UnfoldMore";
+import UnfoldLessIcon from "@mui/icons-material/UnfoldLess";
 
-// Register plugins
-gsap.registerPlugin(ScrollTrigger, ScrollSmoother, Observer);
+// Example FAQ component (single-file). Drop this into your React app.
+// Requirements: @mui/material, @mui/icons-material, emotion packages.
 
-function Service() {
-  const wrapperRef = useRef(null);
-  const contentRef = useRef(null);
-  const sectionsRef = useRef(null);
-  const section1Ref = useRef(null);
+const sampleFaqs = [
+  {
+    id: 1,
+    question: "What services do you offer as a freelance developer?",
+    answer:
+      "I create modern, responsive websites using technologies like React, TailwindCSS, and Node.js. My services include UI/UX implementation, frontend development, backend APIs, bug fixing, performance optimization, and full-stack website builds.",
+    tags: ["Service"],
+  },
+  {
+    id: 2,
+    question: "What are the technologies you use?",
+    answer:
+      "I use the latest technologies, like React/Vite, JavaScript/TypeScript, TailwindCSS, MUI, GSAP.",
+    tags: ["Technology"],
+  },
+  {
+    id: 3,
+    question: "How do I make an order?",
+    answer:
+      "You can contact me on Fiverr (account is linked below), using whatsapp for direct orders, or using this email kavishkauvindu0@gmail.com.",
+    tags: ["Order", "Getting Started"],
+  },
+  {
+    id: 4,
+    question: "How long does it take to complete a website?",
+    answer:
+      "A simple landing page usually takes 3–7 days, while multi-page or feature-rich projects can take 2–4 weeks depending on the complexity and content availability.",
+    tags: ["Order", "Service"],
+  },
+  {
+    id: 5,
+    question: "How do you structure pricing?",
+    answer:
+      "Pricing depends on the project’s size, features, and design requirements. Small projects start at a fixed rate, while larger ones may use milestone-based pricing. You’ll always receive a clear quote before work begins no hidden fees.",
+    tags: ["Pricing", "Order"],
+  },
+  {
+    id: 6,
+    question: "Do you provide ongoing support after the project is completed?",
+    answer:
+      "Yes! I offer maintenance, updates, content changes, security patches, and performance improvements. Support can be provided hourly or via monthly plans.",
+    tags: ["Service"],
+  },
+  {
+    id: 7,
+    question: "Can you work with an existing website or project?",
+    answer:
+      "Definitely. I can redesign your existing site, fix bugs, improve UI/UX, or optimize performance without needing to rebuild everything from scratch",
+    tags: ["Order", "Service"],
+  },
+  {
+    id: 8,
+    question: "How do we communicate during the project?",
+    answer:
+      "I can stay in touch via email, WhatsApp, or your preferred platform. Regular progress updates and previews will be shared throughout the project.",
+    tags: ["Communication"],
+  },
+  {
+    id: 9,
+    question: "Do you need content (text and images) before starting?",
+    answer:
+      "Yes, having content early helps speed up development. But if you don’t have anything yet, I can help draft placeholder text or suggest design friendly layouts.",
+    tags: ["Order"],
+  },
+];
 
-  useEffect(() => {
-    gsap.config({ trialWarn: false });
+export default function Service() {
+  const [query, setQuery] = useState("");
+  const [activeTags, setActiveTags] = useState([]);
+  const [expandedIds, setExpandedIds] = useState([]); // array of opened faq ids
 
-    const wrapper = wrapperRef.current;
-    const content = contentRef.current;
-    const sections = sectionsRef.current;
-    const section1 = section1Ref.current;
-
-    if (!wrapper || !content || !sections || !section1) return;
-
-    let winWidth = window.innerWidth;
-    let smoother, observer, direction;
-
-    // Disable ScrollSmoother when used as a child component
-    // ScrollSmoother interferes with parent scrolling
-    smoother = null;
-
-    // Update Direction (and perspective-origin) - Simplified without smoother
-    function updateDirection(theObserver, immediate = false) {
-      const perspectiveOriginX = Math.floor(
-        100 - (theObserver.startX / winWidth) * 100
-      );
-      const perspectiveOriginY = 50; // Fixed value since no smoother
-
-      if (immediate) {
-        gsap.set(sections, {
-          perspectiveOrigin: `${perspectiveOriginX}% ${perspectiveOriginY}%`,
-        });
-      } else {
-        gsap.to(sections, {
-          perspectiveOrigin: `${perspectiveOriginX}% ${perspectiveOriginY}%`,
-          duration: 0.5,
-        });
-      }
-
-      direction = theObserver.deltaY < 0 ? "up" : "down";
-
-      // Direction for drag is inversed
-      if (direction === "up") {
-        gsap.to(section1, {
-          rotateX: "3deg",
-          duration: 0.5,
-        });
-      } else if (direction === "down") {
-        gsap.to(section1, {
-          rotateX: "-3deg",
-          duration: 0.5,
-        });
-      }
-    }
-
-    // Observer
-    function initObserver() {
-      observer = Observer.create({
-        target: document.body,
-        ignore: "[data-ignore]",
-        type: "pointer",
-        onToggleY: (self) => {
-          updateDirection(self);
-        },
-        onPress: (self) => {
-          gsap.set(content, {
-            cursor: "grabbing",
-          });
-
-          updateDirection(self, true);
-
-          gsap.to("body", {
-            backgroundColor: "#111",
-            duration: 0.5,
-          });
-          gsap.to(section1, {
-            scale: 0.97,
-            duration: 0.5,
-          });
-        },
-        onRelease: (self) => {
-          gsap.set(content, {
-            cursor: "grab",
-          });
-
-          gsap.to(section1, {
-            rotateX: "0deg",
-          });
-          gsap.to("body", {
-            backgroundColor: "#222",
-            duration: 0.5,
-          });
-          gsap.to(section1, {
-            scale: 1,
-            duration: 0.5,
-          });
-        },
-        tolerance: 10,
-      });
-    }
-
-    // Section 1 Animations
-    const introTl = gsap.timeline();
-
-    introTl
-      .fromTo(
-        section1,
-        {
-          transformOrigin: "center bottom",
-          autoAlpha: 0,
-          yPercent: 50,
-        },
-        {
-          autoAlpha: 1,
-          yPercent: 0,
-          duration: 1,
-          delay: 1,
-          ease: "expo",
-        }
-      )
-      .from(
-        ".title-1 .title-text",
-        {
-          yPercent: 100,
-          duration: 1,
-          ease: "power3",
-        },
-        1.5
-      )
-      .from(
-        ".title-2 .title-text",
-        {
-          autoAlpha: 0,
-          duration: 1.5,
-        },
-        2
-      )
-      .from(
-        ".sub-title-1",
-        {
-          autoAlpha: 0,
-          x: 30,
-          duration: 0.5,
-          ease: "power3",
-        },
-        "-=1"
-      )
-      .from(
-        ".sub-title-2",
-        {
-          autoAlpha: 0,
-          x: -30,
-          duration: 0.5,
-          ease: "power3",
-        },
-        "-=1"
-      )
-      .from(
-        ".credit",
-        {
-          autoAlpha: 0,
-          duration: 0.3,
-          onComplete: () => {
-            initPage();
-          },
-        },
-        "-=1"
-      );
-
-    // Section 2 Animations
-    gsap.fromTo(
-      ".section-2 .info",
-      {
-        autoAlpha: 0,
-      },
-      {
-        autoAlpha: 1,
-        duration: 2,
-        scrollTrigger: {
-          scrub: true,
-          trigger: ".section-2 .info",
-          start: "center 80%",
-          end: "center center",
-        },
-      }
-    );
-
-    // Init Page - Simplified without smoother
-    function initPage() {
-      initObserver();
-
-      gsap.set(content, {
-        cursor: "grab",
-      });
-
-      gsap.to(".indicator", {
-        autoAlpha: 1,
-        duration: 1,
-        onComplete: () => {
-          gsap.fromTo(
-            ".indicator",
-            {
-              autoAlpha: 1,
-            },
-            {
-              autoAlpha: 0,
-              duration: 1,
-              scrollTrigger: {
-                scrub: true,
-                trigger: ".indicator",
-                start: "center 80%",
-                end: "center 70%",
-              },
-            }
-          );
-        },
-      });
-    }
-
-    // Resize
-    function onResize() {
-      winWidth = window.innerWidth;
-      ScrollTrigger.refresh();
-    }
-
-    window.addEventListener("resize", onResize);
-
-    // Cleanup
-    return () => {
-      window.removeEventListener("resize", onResize);
-      ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
-      if (observer) observer.kill();
-    };
+  const allTags = useMemo(() => {
+    const s = new Set();
+    sampleFaqs.forEach((f) => f.tags.forEach((t) => s.add(t)));
+    return Array.from(s);
   }, []);
 
+  const filtered = useMemo(() => {
+    const q = query.trim().toLowerCase();
+
+    return sampleFaqs.filter((f) => {
+      const matchesQuery =
+        !q ||
+        f.question.toLowerCase().includes(q) ||
+        f.answer.toLowerCase().includes(q);
+      const matchesTag =
+        activeTags.length === 0 || f.tags.some((t) => activeTags.includes(t));
+      return matchesQuery && matchesTag;
+    });
+  }, [query, activeTags]);
+
+  function toggleTag(tag) {
+    setActiveTags((prev) =>
+      prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]
+    );
+  }
+
+  function toggleExpandAll() {
+    if (expandedIds.length === filtered.map((f) => f.id).length) {
+      setExpandedIds([]);
+    } else {
+      setExpandedIds(filtered.map((f) => f.id));
+    }
+  }
+
+  function handleAccordionToggle(id) {
+    setExpandedIds((prev) =>
+      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
+    );
+  }
+
+  // Basic highlight function for matched query in question text
+  function highlight(text) {
+    if (!query) return text;
+    const q = query.trim();
+    if (!q) return text;
+    const parts = text.split(new RegExp(`(${q})`, "gi"));
+    return (
+      <>
+        {parts.map((part, i) =>
+          part.toLowerCase() === q.toLowerCase() ? (
+            <Box
+              component="span"
+              key={i}
+              sx={{ bgcolor: "primary.light", px: 0.4, borderRadius: 0.5 }}
+            >
+              {part}
+            </Box>
+          ) : (
+            <React.Fragment key={i}>{part}</React.Fragment>
+          )
+        )}
+      </>
+    );
+  }
+
   return (
-    <>
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700&display=swap');
-        
-        .font-bold {
-          font-family: 'Outfit', sans-serif;
-          font-weight: 700;
-        }
-        .font-medium {
-          font-family: 'Outfit', sans-serif;
-          font-weight: 500;
-        }
-        .font-book {
-          font-family: 'Outfit', sans-serif;
-          font-weight: 300;
-        }
-        .font-slant {
-          font-feature-settings: "salt";
-        }
-        
-        #content {
-          background-image:
-            linear-gradient(rgba(255,255,255,.07) 2px, transparent 2px),
-            linear-gradient(90deg, rgba(255,255,255,.07) 2px, transparent 2px),
-            linear-gradient(rgba(255,255,255,.06) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(255,255,255,.06) 1px, transparent 1px);
-          background-size: 100px 100px, 100px 100px, 20px 20px, 20px 20px;
-          background-position: -2px -2px, -2px -2px, -1px -1px, -1px -1px;
-        }
-        
-        .sections {
-          perspective: 1000px;
-          transform-style: preserve-3d;
-        }
-        
-        @keyframes pointDown {
-          0%, 40%, 100% {
-            transform: translateY(0);
-          }
-          10%, 30% {
-            transform: translateY(20px);
-          }
-          20% {
-            transform: translateY(0);
-          }
-        }
-        
-        .pointer {
-          animation: pointDown 2.5s infinite;
-        }
-      `}</style>
+    <Box sx={{ maxWidth: 900, mx: "auto", p: 2 }}>
+      <Stack
+        direction={{ xs: "column", sm: "row" }}
+        spacing={2}
+        alignItems="center"
+        mb={2}
+      >
+        <TextField
+          size="small"
+          placeholder="Search FAQs..."
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          InputProps={{ startAdornment: <SearchIcon sx={{ mr: 1 }} /> }}
+          sx={{ flex: 1 }}
+          aria-label="Search FAQs"
+        />
 
-      <div id="wrapper" ref={wrapperRef} className="min-h-screen">
-        <div
-          id="content"
-          ref={contentRef}
-          className="flex justify-center bg-[#222]"
-          style={{ height: "197vh" }}
-        >
-          <div className="sections" ref={sectionsRef}>
-            {/* Section 1 */}
-            <section
-              className="section-1 relative z-10 w-[90vw] mt-[5vw] bg-[#88CE02] rounded-xl"
-              ref={section1Ref}
-              style={{ minHeight: "calc(100vh + 5vw)" }}
+        <Stack direction="row" spacing={1} alignItems="center">
+          <IconButton
+            onClick={toggleExpandAll}
+            aria-label="Expand or collapse all"
+            size="small"
+          >
+            {expandedIds.length === filtered.map((f) => f.id).length ? (
+              <UnfoldLessIcon />
+            ) : (
+              <UnfoldMoreIcon />
+            )}
+          </IconButton>
+        </Stack>
+      </Stack>
+
+      <Box mb={1}>
+        <Typography variant="subtitle2" gutterBottom>
+          Categories
+        </Typography>
+        <Stack direction="row" spacing={1} flexWrap="wrap">
+          {allTags.map((t) => (
+            <Chip
+              key={t}
+              label={t}
+              onClick={() => toggleTag(t)}
+              variant={activeTags.includes(t) ? "filled" : "outlined"}
+              clickable
+            />
+          ))}
+          {allTags.length === 0 && (
+            <Typography variant="caption">No categories</Typography>
+          )}
+        </Stack>
+      </Box>
+
+      <Divider sx={{ my: 2 }} />
+
+      <Box>
+        {filtered.length === 0 ? (
+          <Typography>No results found.</Typography>
+        ) : (
+          filtered.map((faq) => (
+            <Accordion
+              key={faq.id}
+              expanded={expandedIds.includes(faq.id)}
+              onChange={() => handleAccordionToggle(faq.id)}
+              disableGutters
+              sx={{ mb: 1, borderRadius: 1 }}
             >
-              <div
-                className="c-title absolute top-0 left-0 w-full h-full flex items-center justify-center text-center text-[#121212]"
-                style={{ letterSpacing: "-0.03em" }}
-              >
-                <div className="info relative flex flex-wrap content-center justify-center -translate-y-full">
-                  <div className="sub-title sub-title-1 font-book font-slant relative mt-[3.6vw] text-[2vw]">
-                    <em>GSAP</em>
-                  </div>
-
-                  <div
-                    className="title title-1 font-bold font-slant overflow-hidden leading-[1.4] px-[0.5ch]"
-                    style={{
-                      fontSize: "clamp(36px, 6.6vw, 154px)",
-                      letterSpacing: "-0.05em",
-                    }}
-                  >
-                    <div className="title-text">Drag Demo</div>
-                  </div>
-
-                  <div className="sub-title sub-title-2 font-book font-slant relative mt-[3.6vw] text-[2vw]">
-                    <em>v3.10</em>
-                  </div>
-
-                  <div
-                    className="title title-2 font-medium font-slant overflow-hidden leading-[1.4] w-full -mt-[1.5vw]"
-                    style={{
-                      fontSize: "clamp(30px, 5.5vw, 129px)",
-                      letterSpacing: "-0.04em",
-                    }}
-                  >
-                    <div className="title-text">
-                      <span className="font-book">with</span> ScrollSmoother
-                    </div>
-                  </div>
-                </div>
-
-                <div
-                  className="indicator absolute opacity-0 invisible"
-                  style={{
-                    top: "80vh",
-                    transform: "translateY(-100%)",
-                    fontSize: "clamp(48px, 5.5vw, 129px)",
-                  }}
+              <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                <Stack
+                  direction="row"
+                  alignItems="center"
+                  spacing={2}
+                  sx={{ width: "100%" }}
                 >
-                  <div className="pointer">☟</div>
-                </div>
+                  <Box sx={{ flex: 1 }}>
+                    <Typography variant="subtitle1">
+                      {highlight(faq.question)}
+                    </Typography>
+                    <Stack direction="row" spacing={1} mt={0.5}>
+                      {faq.tags.map((tg) => (
+                        <Chip
+                          key={tg}
+                          label={tg}
+                          size="small"
+                          variant="outlined"
+                        />
+                      ))}
+                    </Stack>
+                  </Box>
+                </Stack>
+              </AccordionSummary>
 
-                <div
-                  className="credit font-medium absolute bottom-[5vw] z-10"
-                  style={{ letterSpacing: "0.01em" }}
-                >
-                  By:{" "}
-                  <a
-                    href="https://vanholtz.co"
-                    target="_blank"
-                    rel="noopener"
-                    data-ignore
-                    className="text-[#121212]"
-                  >
-                    Eric Van Holtz
-                  </a>
-                </div>
-              </div>
-            </section>
+              <AccordionDetails>
+                <Typography>{faq.answer}</Typography>
+              </AccordionDetails>
+            </Accordion>
+          ))
+        )}
+      </Box>
 
-            {/* Section 2 */}
-            <section
-              className="section-2 font-book relative flex flex-wrap content-center justify-center w-[90vw] min-h-screen text-center text-white"
-              data-speed="0.75"
-              style={{
-                fontSize: "clamp(24px, 4.4vw, 103px)",
-                letterSpacing: "-0.04em",
-              }}
-            >
-              <div className="info -translate-y-1/2">
-                <div className="text w-full mb-[5px]">
-                  For more information visit:
-                </div>
-
-                <a
-                  className="font-medium text-[#88CE02]"
-                  href="https://greensock.com/docs/v3/Plugins/ScrollSmoother"
-                  target="_blank"
-                  rel="noopener"
-                  data-ignore
-                >
-                  The Greensock Docs
-                </a>
-              </div>
-            </section>
-          </div>
-        </div>
-      </div>
-    </>
+      <Box mt={3} textAlign="center">
+        <Typography variant="caption" color="text.secondary">
+          Still have questions? Reach out to{" "}
+          <strong>kavishkauvindu0@gmail.com</strong>
+        </Typography>
+      </Box>
+    </Box>
   );
 }
-
-export default Service;
