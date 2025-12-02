@@ -261,37 +261,42 @@ function App() {
         {/* Header */}
         <header
           ref={headerRef}
-          className="fixed top-0 left-0 w-full z-50 p-6 flex justify-between items-center"
+          className="fixed top-0 left-0 w-full z-50 px-8 py-5 flex items-center justify-between backdrop-blur-md bg-white/70 shadow-sm"
         >
-          <h1 className="text-2xl font-bold text-gray-900 transition-colors">
-            It's dev_kavi
+          {/* Logo */}
+          <h1 className="text-2xl font-bold text-gray-900 tracking-tight">
+            dev_kavi
           </h1>
-          <a
-            href="https://wa.me/+94783158893"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-gray-900 hover:text-green-600 transition-colors font-medium"
-          >
-            Catch me on WhatsApp
-          </a>
 
-          <a
-            href="https://www.upwork.com/freelancers/~0134fad8b892aed033"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-gray-900 hover:text-green-600 transition-colors font-medium"
-          >
-            Upwork
-          </a>
+          {/* Navigation Links */}
+          <nav className="flex items-center gap-6">
+            <a
+              href="https://wa.me/+94783158893"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-gray-700 hover:text-green-600 font-medium transition-colors"
+            >
+              WhatsApp
+            </a>
 
-          <a
-            href="https://www.fiverr.com/s/ljGKgDR"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-gray-900 hover:text-green-600 transition-colors font-medium"
-          >
-            Fiverr
-          </a>
+            <a
+              href="https://www.upwork.com/freelancers/~0134fad8b892aed033"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-gray-700 hover:text-green-600 font-medium transition-colors"
+            >
+              Upwork
+            </a>
+
+            <a
+              href="https://www.fiverr.com/s/ljGKgDR"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-gray-700 hover:text-green-600 font-medium transition-colors"
+            >
+              Fiverr
+            </a>
+          </nav>
         </header>
 
         {/* Intro section */}
