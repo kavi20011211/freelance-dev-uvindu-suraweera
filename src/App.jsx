@@ -274,6 +274,24 @@ function App() {
           >
             Catch me on WhatsApp
           </a>
+
+          <a
+            href="https://www.upwork.com/freelancers/~0134fad8b892aed033"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-gray-900 hover:text-green-600 transition-colors font-medium"
+          >
+            Upwork
+          </a>
+
+          <a
+            href="https://www.fiverr.com/s/ljGKgDR"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-gray-900 hover:text-green-600 transition-colors font-medium"
+          >
+            Fiverr
+          </a>
         </header>
 
         {/* Intro section */}
