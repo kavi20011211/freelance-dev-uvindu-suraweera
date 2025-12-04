@@ -25,14 +25,14 @@ const sampleFaqs = [
     id: 1,
     question: "What services do you offer as a freelance developer?",
     answer:
-      "I create modern, responsive websites using technologies like React, TailwindCSS, and Node.js. My services include UI/UX implementation, frontend development, backend APIs, bug fixing, performance optimization, and full-stack website builds.",
+      "I create modern, responsive websites or web applications using technologies like React, TailwindCSS, Java Springboot and Node.js. My services include UI/UX implementation, frontend development, backend APIs, bug fixing, performance optimization, and full-stack website builds.",
     tags: ["Service"],
   },
   {
     id: 2,
     question: "What are the technologies you use?",
     answer:
-      "I use the latest technologies, like React/Vite, JavaScript/TypeScript, TailwindCSS, MUI, GSAP.",
+      "I use the latest technologies, like React/Vite, JavaScript/TypeScript, Java Springboot, TailwindCSS, MUI, GSAP.",
     tags: ["Technology"],
   },
   {
@@ -159,7 +159,7 @@ export default function Service() {
   return (
     <Box sx={{ maxWidth: 900, mx: "auto", p: 2 }}>
       <Stack
-        direction={{ xs: "column", sm: "row" }}
+        direction={{ xs: "row", sm: "row" }}
         spacing={2}
         alignItems="center"
         mb={2}
@@ -193,7 +193,12 @@ export default function Service() {
         <Typography variant="subtitle2" gutterBottom>
           Categories
         </Typography>
-        <Stack direction="row" spacing={1} flexWrap="wrap">
+        <Stack
+          direction="row"
+          spacing={1}
+          flexWrap={{ xs: "wrap", sm: "wrap" }}
+          gap={1}
+        >
           {allTags.map((t) => (
             <Chip
               key={t}

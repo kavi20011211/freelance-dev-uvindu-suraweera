@@ -2,7 +2,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useEffect, useRef } from "react";
 import { AsteriskIcon, StarIcon } from "./component";
-import backgroundImg from "./assets/background.jfif";
+import backgroundImg from "./assets/background.png";
 import Service from "./service";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -191,6 +191,36 @@ function App() {
       });
     }
 
+    // === Mobile popup ===
+    if (window.innerWidth < 768) {
+      const popup = document.createElement("div");
+      popup.className = "mobile-popup";
+      popup.innerHTML = `
+    <div class="mobile-popup-box">
+      <p>✨ Use the desktop version for a better experience</p>
+      <button class="close-popup">Got it</button>
+    </div>
+  `;
+
+      document.body.appendChild(popup);
+
+      // Animate popup
+      gsap.fromTo(
+        ".mobile-popup-box",
+        { y: 50, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.7, ease: "power3.out" }
+      );
+
+      // Close popup
+      popup.querySelector(".close-popup").addEventListener("click", () => {
+        gsap.to(".mobile-popup", {
+          opacity: 0,
+          duration: 0.4,
+          onComplete: () => popup.remove(),
+        });
+      });
+    }
+
     return () => {
       ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
       gsap.killTweensOf(".star-icon");
@@ -256,6 +286,51 @@ function App() {
         .pointer {
           animation: pointDown 2.5s infinite;
         }
+        
+        /* Mobile popup */
+.mobile-popup {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 99999;
+}
+
+.mobile-popup-box {
+  background: white;
+  padding: 22px 32px;
+  border-radius: 16px;
+  text-align: center;
+  font-family: 'Outfit', sans-serif;
+  max-width: 300px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+}
+
+.mobile-popup-box p {
+  font-size: 15px;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 15px;
+}
+
+.mobile-popup-box .close-popup {
+  background: #111827;
+  color: white;
+  padding: 8px 18px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  transition: 0.2s;
+}
+
+.mobile-popup-box .close-popup:hover {
+  background: #333;
+}
+
       `}</style>
       <div className="bg-white">
         {/* Header */}
@@ -301,49 +376,56 @@ function App() {
 
         {/* Intro section */}
         <div
-          className="intro-section relative h-screen flex items-center justify-center bg-white px-10 bg-cover bg-center bg-no-repeat overflow-hidden"
+          className="intro-section relative h-screen flex items-center justify-center bg-white px-6 md:px-10 bg-cover bg-center bg-no-repeat overflow-hidden"
           style={{
             backgroundImage: `url(${backgroundImg})`,
-            backgroundSize: "105%",
+            backgroundSize: "110%",
           }}
         >
           {/* Left section — Text + Icon */}
-          <div className="intro-content w-[800px] flex flex-col gap-8 p-16 relative z-20">
+          <div className="intro-content w-[200px] md:w-[800px] flex flex-col gap-4 md:gap-8 p-8 md:p-16 relative z-20">
             <AsteriskIcon size={100} className="asterisk-icon" />
 
-            <h1 className="text-[80px] leading-[0.9] font-black bg-linear-to-br from-black to-gray-200 bg-clip-text text-transparent">
+            <h1 className="text-[25px] md:text-[80px] leading-[0.9] font-black bg-linear-to-b from-gray-400 to-gray-200 md:bg-linear-to-br md:from-black md:to-gray-200 bg-clip-text text-transparent">
               I design <span className="text-gray-400">first class</span>{" "}
               Websites
             </h1>
           </div>
 
           {/* Right section — Description */}
-          <div className="intro-content flex-1 flex justify-end pr-14 relative z-20">
-            <p className="max-w-[420px] text-[18px] text-gray-800 leading-relaxed">
-              <span className="font-black text-gray-400">Uvindu Suraweera</span>{" "}
+          <div className="intro-content flex-1 flex justify-end pr-7 md:pr-14 relative z-20">
+            <p className="max-w-[200px] md:max-w-[420px] text-[10px] md:text-[18px] bg-linear-to-br from-gray-800 to-gray-400 bg-clip-text text-transparent md:text-gray-800 leading-relaxed">
+              <span className="font-black text-gray-50 md:text-gray-400">
+                Uvindu Suraweera
+              </span>{" "}
               is a{" "}
-              <span className="font-semibold text-gray-700">developer</span>{" "}
+              <span className="font-semibold text-gray-700 md:text-gray-700">
+                developer
+              </span>{" "}
               specializing in{" "}
-              <span className="font-semibold text-gray-700">
+              <span className="font-semibold text-gray-700 md:text-gray-700">
                 website development
               </span>
               . I help businesses achieve their goals through thoughtful{" "}
-              <span className="font-semibold text-gray-700">design</span> and{" "}
-              <span className="font-semibold text-gray-700">
+              <span className="font-semibold text-gray-700 md:text-gray-700">
+                design
+              </span>{" "}
+              and{" "}
+              <span className="font-semibold text-white md:text-gray-700">
                 implementation
               </span>
               . I build{" "}
-              <span className="underline decoration-gray-300 underline-offset-4">
+              <span className="underline decoration-white md:decoration-gray-300 underline-offset-4">
                 responsive
               </span>
               ,{" "}
-              <span className="underline decoration-gray-300 underline-offset-4">
+              <span className="underline decoration-white md:decoration-gray-300 underline-offset-4">
                 animated
               </span>{" "}
               websites using the latest technologies.
               <br />
               <br />
-              <span className="font-semibold  bg-linear-to-r from-gray-800 to-gray-200 bg-clip-text text-transparent">
+              <span className="font-semibold  bg-linear-to-r from-gray-300 to-gray-100 md:from-gray-800 md:to-gray-200 bg-clip-text text-transparent">
                 Let's connect.
               </span>
             </p>
